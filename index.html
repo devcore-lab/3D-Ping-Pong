@@ -34,8 +34,6 @@ function restart(){armed=false;powerCooldown=0;record=0;document.getElementById(
 document.getElementById('start').addEventListener('click',restart);document.getElementById('pause').addEventListener('click',()=>{if(!running)return;paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';msg.textContent=paused?'Paused':'Play!'});
 function setAim(v){aim=Math.max(-1.02,Math.min(1.02,v));touch.value=Math.round(aim/1.02*100)}
 function pointer(e){const r=view.getBoundingClientRect();setAim(((e.clientX-r.left)/r.width-.5)*2.5)}view.addEventListener('pointerdown',e=>{view.setPointerCapture(e.pointerId);pointer(e)});view.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons)pointer(e)});touch.addEventListener('input',()=>setAim(+touch.value/100*1.02));function armPower(){if(running&&!paused&&powerCooldown<=0){armed=true;document.getElementById('powerState').textContent='⚡ ARMED — hit the ball!'}}document.getElementById('powerBtn').addEventListener('click',armPower);window.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat){e.preventDefault();armPower()}});
-// Arcade rally model: each shot crosses the net above its top, bounces on
-// the receiving half, and reaches the paddle at a playable height.
 let shotProgress=0, shotFrom=0, shotTo=2.13, shotStartX=0, shotEndX=0, shotDuration=1.15;
 function beginShot(to, fromX, fromZ, speedMultiplier=1, power=false){
  shotPower=power;
@@ -45,8 +43,7 @@ function beginShot(to, fromX, fromZ, speedMultiplier=1, power=false){
  x=fromX;z=fromZ;y=TOP+.28;
 }
 function flightHeight(p){
- // At net p~0.5 the ball is ~0.85m above the table.
- // Bounce at p=0.79 on the receiving side, then rise to the paddle.
+
  if(p<.79){const u=p/.79;return TOP+R+(shotPower?.76:.66)*Math.sin(Math.PI*u)+.19*(1-u)}
  const u=(p-.79)/.21;return TOP+R+.20*Math.sin(Math.PI*u)+.16*u;
 }
@@ -79,13 +76,8 @@ function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000||
    if(Math.abs(x-player.position.x)<.49){
     rally++;msg.textContent='Rally '+rally;
     const powerful=armed;armed=false;if(powerful)powerCooldown=4;beginShot(-2.13,x,2.13,rally,powerful);
-    // Player can aim by contacting the ball off-centre.
-    // Ball striking the right side of the bat travels right; left side travels left.
-    // Swing direction adds a smaller amount of sidespin/placement.
     const contact=Math.max(-1,Math.min(1,(x-player.position.x)/.49));
     const swing=Math.max(-1,Math.min(1,smoothedSwing/2.5));
-    // The contact point dominates aim, while sideways bat movement adds angle.
-    // Full edge contact can send a ball from one corner to the opposite corner.
     const lateral=contact*1.65+swing*.95+(x>0?-.16:.16);
     shotEndX=Math.max(-1.12,Math.min(1.12,lateral));
     const crossCourt=(x*shotEndX<-.16);
@@ -103,12 +95,10 @@ function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000||
  }
  renderer.render(scene,camera);
 }
-// Replace the original serve with an arcade-safe serve.
 serve=function(direction){document.getElementById('speed').textContent='0 km/h';document.getElementById('powerNotice').style.opacity='0';delay=.75;rally=0;beginShot(direction>0?2.13:-2.13,0,direction>0?-2.13:2.13);ball.position.set(0,TOP+.28,-direction*2.13)};
 function resize(){
  const w=Math.max(1,view.clientWidth),h=Math.max(1,view.clientHeight);
  camera.aspect=w/h;
- // Fit the entire table inside the camera frustum, including on narrow screens.
  const vertical=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
  const horizontal=vertical*camera.aspect;
  const distance=Math.max(7.5,2.0/horizontal,3.1/vertical);
