@@ -1,27 +1,50 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>3D Ping Pong — Ultimate Edition</title><style>*{box-sizing:border-box}body{margin:0;background:#0b1424;color:#fff;font-family:system-ui,Arial}header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:22px}.scores{font-size:24px;font-weight:800}button,select{background:#1d3554;color:white;border:1px solid #587092;border-radius:9px;padding:10px 16px;font-size:15px;cursor:pointer}button:hover{background:#34557c}#view{height:min(70vh,650px);min-height:340px;position:relative;touch-action:none}#view canvas{display:block;width:100%;height:100%}#message{position:absolute;top:15px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:12px;background:#07121dcc;font-weight:700;pointer-events:none;white-space:nowrap}footer{padding:10px 20px;color:#b9c8db;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}#touch{width:220px;accent-color:#53c4ff}#error{color:#ffaaaa;padding:20px}.hud{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 20px;background:#101e32;border-top:1px solid #30405b}.meter{font-variant-numeric:tabular-nums;font-size:22px;font-weight:800;color:#79ddff}.power{color:#ffd66d;font-weight:800}#powerBtn{background:#8a3b16;border-color:#ffb55b}#powerBtn:disabled{opacity:.5}#powerNotice{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:27px;font-weight:900;color:#ffd66d;text-shadow:0 2px 12px #000;pointer-events:none;opacity:0;transition:opacity .2s}</style></head><body><header><h1>🏓 3D PING PONG</h1><div class="scores">YOU <span id="human">0</span> : <span id="cpu">0</span> CPU</div><div><button id="start">Start / Restart</button> <button id="pause">Pause</button> <select id="difficulty" aria-label="Difficulty"><option value="0">Easy</option><option value="1" selected>Medium</option><option value="2">Hard</option><option value="3">Expert</option></select></div></header><div id="view"><div id="message">Press Start to play</div><div id="powerNotice">⚡ POWER SHOT!</div></div><div class="hud"><span>🏓 Ball speed: <span class="meter" id="speed">0 km/h</span></span><span>⚡ Fastest: <span id="record">0 km/h</span></span><span id="powerState" class="power">POWER READY</span><span id="shotLabel">🎯 Bat contact + sideways swing determine shot direction</span><button id="powerBtn" type="button">⚡ Power shot (Space)</button></div><footer><span>Mouse / drag: move your bat. Hit off-centre or sweep sideways to aim cross-court • Space: power shot • First to 11, win by 2</span><label>Touch paddle <input id="touch" type="range" min="-100" max="100" value="0"></label></footer><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ping Pong 3D — Easy to Play</title><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2638408957359870" crossorigin="anonymous"></script><style>*{box-sizing:border-box}body{margin:0;background:#0b1424;color:#fff;font-family:system-ui,Arial}header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:22px}.scores{font-size:24px;font-weight:800}button,select{background:#1d3554;color:white;border:1px solid #587092;border-radius:9px;padding:10px 16px;font-size:15px;cursor:pointer}button:hover{background:#34557c}#view{height:min(78vh,790px);min-height:420px;position:relative;touch-action:none}#view canvas{display:block;width:100%;height:100%}#message{position:absolute;top:15px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:12px;background:#07121dcc;font-weight:700;pointer-events:none;white-space:nowrap}#gameInfo{display:flex;gap:18px;justify-content:center;align-items:center;padding:8px 12px;color:#b9c8db;font-size:13px}.countryPick{font-size:14px;color:#d8e7f5}.countryPick select{max-width:195px}#start{background:#157d56;border-color:#37c38b;font-weight:800}#start:hover{background:#209b6b}#error{color:#ffaaaa;padding:20px}.hud{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 20px;background:#101e32;border-top:1px solid #30405b}.meter{font-variant-numeric:tabular-nums;font-size:22px;font-weight:800;color:#79ddff}.power{color:#ffd66d;font-weight:800}#welcome{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% 25%,#193d5a,#081321 75%);display:flex;align-items:center;justify-content:center;padding:20px}#welcome .card{width:min(440px,100%);text-align:center;background:#12283c;border:1px solid #46677f;border-radius:22px;padding:32px 24px;box-shadow:0 20px 70px #0007}#welcome h2{font-size:36px;margin:0 0 10px}#welcome p{color:#c6d9e6;line-height:1.5}#welcome select,#welcome button{width:100%;margin-top:14px;padding:15px;font-size:18px}#welcome button{background:#16845c;font-weight:800}#welcome button:disabled{opacity:.5;cursor:wait}#welcome .hint{font-size:13px;color:#9db6c7}body:not(.playing) header,body:not(.playing) #view,body:not(.playing) #gameInfo{visibility:hidden}#welcome[hidden]{display:none!important}</style></head><body><div id="welcome"><div class="card"><h2>🏓 PING PONG 3D</h2><p>Choose your country, then take on the computer!</p><label for="welcomeCountry">Your country</label><select id="welcomeCountry"><option value="">Choose your country</option></select><div id="flagPreview" aria-hidden="true" style="font-size:64px;margin:12px auto 0">🌍</div><button id="welcomePlay">▶ PLAY</button><p id="welcomeStatus" class="hint">Choose a country and press Play.</p></div></div><header><h1>🏓 PING PONG 3D</h1><div class="scores"><span id="countryFlag">🌍</span> <span id="countryName">YOU</span> <span id="human">0</span> : <span id="cpu">0</span> CPU</div><div><label class="countryPick" for="country">🌍 Country <select id="country" aria-label="Choose your country"><option value="">Choose your country</option></select></label> <button id="start">Choose your country &amp; Play</button> <button id="pause">Pause</button> <select id="difficulty" aria-label="Difficulty"><option value="0" selected>Easy</option><option value="1">Medium</option><option value="2">Hard</option><option value="3">Expert</option></select></div></header><div id="view"><div id="message">Choose your country and press Play</div></div><div id="gameInfo" aria-live="polite"><span>🏓 <span id="speed">0 km/h</span></span><span>🏆 Best <span id="record">0 km/h</span></span><span id="shotLabel" hidden></span><input id="touch" type="range" min="-100" max="100" value="0" hidden></div><script type="module">
 const view=document.getElementById('view'),msg=document.getElementById('message'),human=document.getElementById('human'),cpu=document.getElementById('cpu'),touch=document.getElementById('touch');
+const countries=[['🇬🇧','United Kingdom'],['🇺🇸','United States'],['🇵🇱','Poland'],['🇨🇦','Canada'],['🇦🇺','Australia'],['🇫🇷','France'],['🇩🇪','Germany'],['🇪🇸','Spain'],['🇮🇹','Italy'],['🇳🇱','Netherlands'],['🇧🇪','Belgium'],['🇨🇭','Switzerland'],['🇸🇪','Sweden'],['🇳🇴','Norway'],['🇩🇰','Denmark'],['🇫🇮','Finland'],['🇮🇪','Ireland'],['🇵🇹','Portugal'],['🇨🇿','Czechia'],['🇸🇰','Slovakia'],['🇺🇦','Ukraine'],['🇷🇴','Romania'],['🇬🇷','Greece'],['🇹🇷','Türkiye'],['🇮🇳','India'],['🇨🇳','China'],['🇯🇵','Japan'],['🇰🇷','South Korea'],['🇸🇬','Singapore'],['🇲🇾','Malaysia'],['🇹🇭','Thailand'],['🇮🇩','Indonesia'],['🇵🇭','Philippines'],['🇻🇳','Vietnam'],['🇧🇷','Brazil'],['🇦🇷','Argentina'],['🇲🇽','Mexico'],['🇨🇴','Colombia'],['🇿🇦','South Africa'],['🇳🇬','Nigeria'],['🇪🇬','Egypt'],['🇲🇦','Morocco'],['🇸🇦','Saudi Arabia'],['🇦🇪','United Arab Emirates'],['🇮🇱','Israel'],['🇳🇿','New Zealand']];
+const countrySelect=document.getElementById('country');
+for(const [flag,name] of countries){const o=document.createElement('option');o.value=name;o.textContent=flag+' '+name;countrySelect.append(o)}
+countrySelect.value=localStorage.getItem('pingpong_country')||'';
+const welcomeCountry=document.getElementById('welcomeCountry');const welcomePlay=document.getElementById('welcomePlay');const welcomeStatus=document.getElementById('welcomeStatus');
+welcomeCountry.innerHTML=countrySelect.innerHTML;welcomeCountry.value=countrySelect.value;
+welcomeCountry.addEventListener('change',()=>{countrySelect.value=welcomeCountry.value;updateCountry();document.getElementById('flagPreview').textContent=countries.find(c=>c[1]===welcomeCountry.value)?.[0]||'🌍'});
+countrySelect.addEventListener('change',()=>{welcomeCountry.value=countrySelect.value});
+function updateCountry(){const item=countries.find(c=>c[1]===countrySelect.value);document.getElementById('countryFlag').textContent=item?.[0]||'🌍';document.getElementById('countryName').textContent=item?.[1]||'YOU';if(item)localStorage.setItem('pingpong_country',item[1]);}
+countrySelect.addEventListener('change',updateCountry);updateCountry();document.getElementById('flagPreview').textContent=countries.find(c=>c[1]===welcomeCountry.value)?.[0]||'🌍';
+let restartGame=null,playRequested=false;
+welcomePlay.addEventListener('click',()=>{if(!welcomeCountry.value){welcomeStatus.textContent='Choose your country first.';welcomeCountry.focus();return;}countrySelect.value=welcomeCountry.value;updateCountry();playRequested=true;if(restartGame){startMatch();}else{welcomePlay.textContent='Preparing match…';welcomeStatus.textContent='Loading the 3D table — please wait.';}});
+function startMatch(){if(!restartGame)return;document.body.classList.add('playing');document.getElementById('welcome').hidden=true;restartGame();window.dispatchEvent(new Event('resize'));}
+
+const startButton=document.getElementById('start');
+startButton.addEventListener('click',()=>{if(!countrySelect.value){msg.textContent='Choose your country first!';countrySelect.focus();return}updateCountry();if(restartGame){restartGame()}else{msg.textContent='Loading game engine…';}});
+startButton.disabled=true;
+msg.textContent='Loading game engine…';
 try {
-const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/+esm');
+let THREE;
+let loadError;
+for(const url of ['https://cdn.jsdelivr.net/npm/three@0.180.0/+esm','https://esm.sh/three@0.180.0']){
+ try {THREE=await import(url);break;}catch(err){loadError=err;}
+}
+if(!THREE)throw loadError||new Error('Unable to load game engine');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#101b2c');const camera=new THREE.PerspectiveCamera(48,1,.1,100);camera.position.set(0,5.4,7.6);camera.lookAt(0,.65,0);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));view.prepend(renderer.domElement);scene.add(new THREE.HemisphereLight(0xddeeff,0x354055,2.4));const light=new THREE.DirectionalLight(0xffffff,2.4);light.position.set(-3,8,4);scene.add(light);
-const TOP=.7,W=2.6,L=4.8,R=.065;
+const TOP=.7,W=3.05,L=5.4,R=.065;
 function box(w,h,d,c,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c,roughness:.7}));m.position.set(x,y,z);scene.add(m);return m}
 box(30,.1,30,0x263246,0,-.08,0);box(W,.13,L,0x1478a8,0,TOP,0);box(W+.1,.08,L+.1,0x112c45,0,TOP-.11,0);
-for(const x of [-1.1,1.1])for(const z of [-1.92,1.92])box(.11,.64,.11,0x9da7b2,x,.31,z);
+for(const x of [-1.29,1.29])for(const z of [-2.16,2.16])box(.11,.64,.11,0x9da7b2,x,.31,z);
 for(const x of [-W/2+.035,W/2-.035])box(.018,.009,L,0xffffff,x,TOP+.07,0);
 for(const z of [-L/2+.035,L/2-.035])box(W,.009,.018,0xffffff,0,TOP+.07,z);
 box(.018,.009,L,0xd4f2ff,0,TOP+.071,0);
 const net=box(W+.18,.33,.02,0xb3c6d3,0,TOP+.23,0);net.material.transparent=true;net.material.opacity=.52;
-for(let x=-1.3;x<=1.3;x+=.13)box(.009,.33,.027,0x5b7282,x,TOP+.23,0);
+for(let x=-W/2;x<=W/2;x+=.13)box(.009,.33,.027,0x5b7282,x,TOP+.23,0);
 for(let y=TOP+.08;y<TOP+.4;y+=.08)box(W+.18,.009,.027,0x5b7282,0,y,0);
-function paddle(c,z){const g=new THREE.Group();const head=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.05,32),new THREE.MeshStandardMaterial({color:c}));head.rotation.x=Math.PI/2;g.add(head);const handle=new THREE.Mesh(new THREE.BoxGeometry(.12,.32,.07),new THREE.MeshStandardMaterial({color:0xc59661}));handle.position.y=-.29;g.add(handle);g.position.set(0,TOP+.25,z);scene.add(g);return g}
-const player=paddle(0xe83b43,2.13),opponent=paddle(0x26262d,-2.13);
+function paddle(c,z){const g=new THREE.Group();const head=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.05,32),new THREE.MeshStandardMaterial({color:c}));head.rotation.x=Math.PI/2;g.add(head);const handle=new THREE.Mesh(new THREE.BoxGeometry(.12,.32,.07),new THREE.MeshStandardMaterial({color:0xc59661}));handle.position.y=-.29;g.add(handle);g.position.set(0,TOP+.25,z);scene.add(g);return g}
+const player=paddle(0xe83b43,2.46),opponent=paddle(0x26262d,-2.46);
 const ball=new THREE.Mesh(new THREE.SphereGeometry(R,24,16),new THREE.MeshStandardMaterial({color:0xfff5d5}));scene.add(ball);
 const landingMarker=new THREE.Mesh(new THREE.RingGeometry(.11,.16,32),new THREE.MeshBasicMaterial({color:0xffd66d,side:THREE.DoubleSide,depthTest:false}));landingMarker.rotation.x=-Math.PI/2;landingMarker.position.set(0,TOP+.083,-1.6);scene.add(landingMarker);const shadow=new THREE.Mesh(new THREE.CircleGeometry(.09,24),new THREE.MeshBasicMaterial({color:0x071524,transparent:true,opacity:.25}));shadow.rotation.x=-Math.PI/2;shadow.position.y=TOP+.075;scene.add(shadow);
-let running=false,paused=false,scores=[0,0],x=0,y=TOP+.6,z=0,vx=0,vy=0,vz=0,aim=0,aiX=0,delay=0,rally=0,last=0;let batVelocity=0, previousBatX=0, smoothedSwing=0;const shotLabel=document.getElementById("shotLabel");let armed=false,powerCooldown=0,shotPower=false,flashUntil=0,record=0,previousX=0,previousY=0,previousZ=0;
+let running=false,paused=false,scores=[0,0],x=0,y=TOP+.6,z=0,vx=0,vy=0,vz=0,aim=0,aiX=0,delay=0,rally=0,last=0;let batVelocity=0, previousBatX=0, smoothedSwing=0;const shotLabel=document.getElementById("shotLabel");let record=0;let bestRally=0;
 function serve(direction){
-  delay=.85;rally=0;shotPower=false;shotProgress=0;
-  shotFrom=direction>0?-2.13:2.13;
-  shotTo=direction>0?2.13:-2.13;
+  delay=.85;rally=0;shotProgress=0;
+  shotFrom=direction>0?-2.46:2.46;
+  shotTo=direction>0?2.46:-2.46;
   shotStartX=(Math.random()-.5)*.45;
   shotEndX=(Math.random()-.5)*.65;
   shotDuration=.67;
@@ -29,36 +52,37 @@ function serve(direction){
   ball.position.set(x,y,z);
   msg.textContent=direction>0?'Computer serves':'Your serve';
 }
-function score(who){scores[who]++;human.textContent=scores[0];cpu.textContent=scores[1];if(scores[who]>=11&&scores[who]-scores[1]>=2){running=false;msg.textContent=who===0?'🏆 YOU WIN! Press Restart':'CPU WINS — Press Restart';return}msg.textContent=who===0?'Your point!':'CPU point!';serve(who===0?-1:1)}
-function restart(){armed=false;powerCooldown=0;record=0;document.getElementById('record').textContent='0 km/h';document.getElementById('speed').textContent='0 km/h';document.getElementById('powerState').textContent='POWER READY';scores=[0,0];human.textContent=0;cpu.textContent=0;running=true;paused=false;document.getElementById('pause').textContent='Pause';msg.textContent='Play!';serve(Math.random()<.5?1:-1)}
-document.getElementById('start').addEventListener('click',restart);document.getElementById('pause').addEventListener('click',()=>{if(!running)return;paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';msg.textContent=paused?'Paused':'Play!'});
-function setAim(v){aim=Math.max(-1.02,Math.min(1.02,v));touch.value=Math.round(aim/1.02*100)}
-function pointer(e){const r=view.getBoundingClientRect();setAim(((e.clientX-r.left)/r.width-.5)*2.5)}view.addEventListener('pointerdown',e=>{view.setPointerCapture(e.pointerId);pointer(e)});view.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons)pointer(e)});touch.addEventListener('input',()=>setAim(+touch.value/100*1.02));function armPower(){if(running&&!paused&&powerCooldown<=0){armed=true;document.getElementById('powerState').textContent='⚡ ARMED — hit the ball!'}}document.getElementById('powerBtn').addEventListener('click',armPower);window.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat){e.preventDefault();armPower()}});
-let shotProgress=0, shotFrom=0, shotTo=2.13, shotStartX=0, shotEndX=0, shotDuration=1.15;
-function beginShot(to, fromX, fromZ, speedMultiplier=1, power=false){
- shotPower=power;
+function score(who){scores[who]++;human.textContent=scores[0];cpu.textContent=scores[1];if(scores[who]>=11&&scores[who]-scores[1]>=2){running=false;msg.textContent=who===0?'🏆 YOU WIN! Press Play to restart':'CPU WINS — Press Restart';return}msg.textContent=who===0?'Your point!':'CPU point!';serve(who===0?-1:1)}
+function restart(){bestRally=0;record=0;document.getElementById('record').textContent='0 km/h';document.getElementById('speed').textContent='0 km/h';scores=[0,0];human.textContent=0;cpu.textContent=0;running=true;paused=false;document.getElementById('pause').textContent='Pause';msg.textContent='Play!';serve(Math.random()<.5?1:-1)}
+restartGame=restart;welcomePlay.disabled=false;welcomePlay.textContent='▶ PLAY';welcomeStatus.textContent='Ready! Move your mouse to control the bat.';if(playRequested)startMatch();startButton.disabled=false;startButton.textContent='▶ Play / Restart';msg.textContent='Choose your country and press Play';document.getElementById('pause').addEventListener('click',()=>{if(!running)return;paused=!paused;document.getElementById('pause').textContent=paused?'Resume':'Pause';msg.textContent=paused?'Paused':'Play!'});
+function setAim(v){aim=Math.max(-1.54,Math.min(1.54,v));touch.value=Math.round(aim/1.54*100)}
+function pointer(e){const r=view.getBoundingClientRect();setAim(((e.clientX-r.left)/r.width-.5)*3.35)}view.addEventListener('pointerdown',e=>{view.setPointerCapture(e.pointerId);pointer(e)});view.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons)pointer(e)});touch.addEventListener('input',()=>setAim(+touch.value/100*1.54));
+// Arcade rally model: each shot crosses the net above its top, bounces on
+// the receiving half, and reaches the paddle at a playable height.
+let shotProgress=0, shotFrom=0, shotTo=2.46, shotStartX=0, shotEndX=0, shotDuration=1.15;
+function beginShot(to, fromX, fromZ, speedMultiplier=1){
  shotProgress=0;shotFrom=fromZ;shotTo=to;shotStartX=fromX;
- shotEndX=Math.max(-1.03,Math.min(1.03,fromX+(Math.random()-.5)*1.05));
- shotDuration=power?.30:Math.max(.38,.60-speedMultiplier*.016);
+ shotEndX=Math.max(-1.3,Math.min(1.3,fromX+(Math.random()-.5)*1.05));
+ shotDuration=Math.max(.50,.94-speedMultiplier*.023);
  x=fromX;z=fromZ;y=TOP+.28;
 }
 function flightHeight(p){
-
- if(p<.79){const u=p/.79;return TOP+R+(shotPower?.76:.66)*Math.sin(Math.PI*u)+.19*(1-u)}
+ // At net p~0.5 the ball is ~0.85m above the table.
+ // Bounce at p=0.79 on the receiving side, then rise to the paddle.
+ if(p<.79){const u=p/.79;return TOP+R+.66*Math.sin(Math.PI*u)+.19*(1-u)}
  const u=(p-.79)/.21;return TOP+R+.20*Math.sin(Math.PI*u)+.16*u;
 }
 function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000||.016,.035);last=t;
+ previousBatX=player.position.x;player.position.x=aim;
  if(running&&!paused){
- powerCooldown=Math.max(0,powerCooldown-dt);if(!armed)document.getElementById('powerState').textContent=powerCooldown>0?'Power recharging: '+powerCooldown.toFixed(1)+'s':'POWER READY';
- previousBatX=player.position.x;
- player.position.x+=(aim-player.position.x)*Math.min(1,dt*18);
+
  batVelocity=(player.position.x-previousBatX)/Math.max(dt,.001);
  smoothedSwing=smoothedSwing*.82+Math.max(-5,Math.min(5,batVelocity))*.18;
- landingMarker.position.x=Math.max(-1.05,Math.min(1.05,player.position.x));
+ landingMarker.position.x=Math.max(-1.3,Math.min(1.3,player.position.x));
  const skill=+document.getElementById('difficulty').value;
- const speed=[1.6,2.8,4.6,7.5][skill],error=[.38,.23,.11,.035][skill];
+ const speed=[1.15,2.0,3.7,6.0][skill],error=[.58,.36,.15,.05][skill];
  const incoming=shotTo<0;
- const target=Math.max(-1.02,Math.min(1.02,(incoming?shotEndX:x)+Math.sin(t*.0013)*error));
+ const target=Math.max(-1.3,Math.min(1.3,(incoming?shotEndX:x)+Math.sin(t*.0013)*error));
  aiX+=(target-aiX)*Math.min(1,dt*speed);opponent.position.x=aiX;
  if(delay>0){delay-=dt;}else{
  shotProgress=Math.min(1,shotProgress+dt/shotDuration);
@@ -67,27 +91,32 @@ function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000||
  x=shotStartX+(shotEndX-shotStartX)*p;
  y=flightHeight(p);
  ball.position.set(x,y,z);
- const v=Math.sqrt((shotEndX-shotStartX)**2+(shotTo-shotFrom)**2)/shotDuration;const kmh=Math.round(v*3.6*(2.74/4.8));document.getElementById('speed').textContent=kmh+' km/h';if(kmh>record){record=kmh;document.getElementById('record').textContent=record+' km/h'}
- document.getElementById('powerNotice').style.opacity=shotPower?'1':'0';ball.material.color.setHex(shotPower?0xffa329:0xfff5d5);
+ const v=Math.sqrt((shotEndX-shotStartX)**2+(shotTo-shotFrom)**2)/shotDuration;const kmh=Math.round(v*3.6*(2.74/5.4));document.getElementById('speed').textContent=kmh+' km/h';if(kmh>record){record=kmh;document.getElementById('record').textContent=record+' km/h'}
+
  shadow.position.x=x;shadow.position.z=z;
  shadow.material.opacity=Math.max(.04,.25-(y-TOP)*.14);
  if(p>=1){
   if(shotTo>0){
-   if(Math.abs(x-player.position.x)<.49){
-    rally++;msg.textContent='Rally '+rally;
-    const powerful=armed;armed=false;if(powerful)powerCooldown=4;beginShot(-2.13,x,2.13,rally,powerful);
-    const contact=Math.max(-1,Math.min(1,(x-player.position.x)/.49));
+   if(Math.abs(x-player.position.x)<.76){
+    rally++;bestRally=Math.max(bestRally,rally);msg.textContent='Rally '+rally+' • Best '+bestRally;
+    beginShot(-2.46,x,2.46,rally);
+    // Player can aim by contacting the ball off-centre.
+    // Ball striking the right side of the bat travels right; left side travels left.
+    // Swing direction adds a smaller amount of sidespin/placement.
+    const contact=Math.max(-1,Math.min(1,(x-player.position.x)/.76));
     const swing=Math.max(-1,Math.min(1,smoothedSwing/2.5));
-    const lateral=contact*1.65+swing*.95+(x>0?-.16:.16);
-    shotEndX=Math.max(-1.12,Math.min(1.12,lateral));
+    // The contact point dominates aim, while sideways bat movement adds angle.
+    // Full edge contact can send a ball from one corner to the opposite corner.
+    const lateral=contact*1.1+swing*.44+(x>0?-.08:.08);
+    shotEndX=Math.max(-1.28,Math.min(1.28,lateral));
     const crossCourt=(x*shotEndX<-.16);
     shotLabel.textContent=crossCourt?'🎯 CROSS-COURT!':shotEndX<-.42?'🎯 SHARP LEFT':shotEndX>.42?'🎯 SHARP RIGHT':'🎯 STRAIGHT';
    }else score(1);
   }else{
-   const tolerance=[.31,.38,.43,.48][skill];
+   const tolerance=[.19,.28,.42,.51][skill];
    if(Math.abs(x-aiX)<tolerance){
-    rally++;msg.textContent='Rally '+rally;
-    const powerful=Math.random()<([.06,.11,.17,.23][skill]);beginShot(2.13,x,-2.13,rally,powerful);
+    rally++;bestRally=Math.max(bestRally,rally);msg.textContent='Rally '+rally+' • Best '+bestRally;
+    beginShot(2.46,x,-2.46,rally);
    }else score(0);
   }
  }
@@ -95,17 +124,19 @@ function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-last)/1000||
  }
  renderer.render(scene,camera);
 }
-serve=function(direction){document.getElementById('speed').textContent='0 km/h';document.getElementById('powerNotice').style.opacity='0';delay=.75;rally=0;beginShot(direction>0?2.13:-2.13,0,direction>0?-2.13:2.13);ball.position.set(0,TOP+.28,-direction*2.13)};
+// Replace the original serve with an arcade-safe serve.
+serve=function(direction){document.getElementById('speed').textContent='0 km/h';delay=.75;rally=0;beginShot(direction>0?2.46:-2.46,0,direction>0?-2.46:2.46);ball.position.set(0,TOP+.28,-direction*2.46)};
 function resize(){
  const w=Math.max(1,view.clientWidth),h=Math.max(1,view.clientHeight);
  camera.aspect=w/h;
+ // Fit the entire table inside the camera frustum, including on narrow screens.
  const vertical=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
  const horizontal=vertical*camera.aspect;
- const distance=Math.max(7.5,2.0/horizontal,3.1/vertical);
- camera.position.set(0,TOP+distance*.49,distance);
+ const distance=Math.max(6.3,2.2/horizontal,3.15/vertical);
+ camera.position.set(0,TOP+distance*.57,distance);
  camera.lookAt(0,TOP,0);
  camera.updateProjectionMatrix();
  renderer.setSize(w,h,false);
  }new ResizeObserver(resize).observe(view);resize();serve(1);requestAnimationFrame(frame);
-}catch(e){console.error(e);document.getElementById('view').insertAdjacentHTML('beforeend','<div id="error">Unable to load Three.js. Check your internet connection and reopen the file in Chrome, Safari, or Edge.</div>')}
+}catch(e){console.error(e);msg.textContent='Game engine failed to load';startButton.disabled=false;startButton.textContent='Retry loading';welcomePlay.disabled=false;welcomePlay.textContent='Retry loading';welcomeStatus.textContent='Could not load 3D engine. Check internet connection.';welcomePlay.onclick=()=>location.reload();startButton.addEventListener('click',()=>location.reload());document.getElementById('view').insertAdjacentHTML('beforeend','<div id="error">Game engine could not load. Check your connection or try another browser, then reload.</div>')}
 </script></body></html>
